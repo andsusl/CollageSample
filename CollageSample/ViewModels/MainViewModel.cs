@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CollageSample.Core.Models;
 using System.Net;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace CollageSample.ViewModels
 {
@@ -15,19 +17,28 @@ namespace CollageSample.ViewModels
         #region RecentUsers property - list of recently searcheed users
         const string RecentSearchedUsers = "RecentSearchedUsers";
 
-        public ObservableCollection<string> RecentUsers
+        Dictionary<string, long> m_dict = null;
+        public List<string> RecentUsers
         {
-            get;
-            private set;
+            get
+            {
+                var query = (from pair in m_dict orderby pair.Value select pair.Key).Take(20);
+                return query.ToList();
+            }
         }
 
         void UpdateRecentSearches(string value)
         {
-            if (!RecentUsers.Contains(value))
+            if (!m_dict.ContainsKey(value))
             {
-                RecentUsers.Add(value);
-                SerializeRecentSearches();
+                m_dict.Add(value, 1);
             }
+            else
+            {
+                m_dict[value] = m_dict[value] + 1;
+            }
+            SerializeRecentSearches();
+            RaisePropertyChanged("RecentUsers");
         }
 
         // In WP8.0 I was able to write ApplicationSettings[RecentSearchedUsers] = RecentUsers;
@@ -37,7 +48,7 @@ namespace CollageSample.ViewModels
             var compositeValue = new Windows.Storage.ApplicationDataCompositeValue();
             for (int i = 0; i < RecentUsers.Count; ++i)
             {
-                compositeValue.Add(i.ToString(), RecentUsers[i]);
+                compositeValue.Add(m_dict.Keys.ElementAt(i), m_dict.Values.ElementAt(i));
             }
 
             Windows.Storage.ApplicationData.Current.LocalSettings.Values[RecentSearchedUsers] = compositeValue;
@@ -50,18 +61,17 @@ namespace CollageSample.ViewModels
                 var compositeValue = Windows.Storage.ApplicationData.Current.LocalSettings.Values[RecentSearchedUsers] as Windows.Storage.ApplicationDataCompositeValue;
                 if (null != compositeValue)
                 {
-                    ObservableCollection<string> recents = new ObservableCollection<string>();
-                    foreach (var value in compositeValue.Values)
+                    m_dict = new Dictionary<string, long>();
+                    foreach (var pair in compositeValue)
                     {
-                        recents.Add(value as string);
+                        m_dict.Add(pair.Key, (long)pair.Value);
                     }
-                    RecentUsers = recents;
                 }
             }
 
-            if (null == RecentUsers)
+            if (null == m_dict)
             {
-                RecentUsers = new ObservableCollection<string>();
+                m_dict = new Dictionary<string, long>();
             }
 
         }
@@ -95,7 +105,8 @@ namespace CollageSample.ViewModels
 
         void OnUserSelected(InstagramUser user)
         {
-            throw new NotImplementedException();
+            // TODO: needs some location service
+            (Window.Current.Content as Frame).Navigate(typeof(CollageSample.Views.CollagePage), user);
         }
         #endregion
 
@@ -112,17 +123,12 @@ namespace CollageSample.ViewModels
         {
             try
             {
-                UpdateRecentSearches(value);
-                if (null != UsersList && 0 == UsersList.Count &&
-                    !string.IsNullOrEmpty(m_previousRequest) && value.StartsWith(m_previousRequest))
-                {
-                    return;
-                }
-
                 if (0 == string.Compare(value, m_previousRequest))
                 {
                     return;
                 }
+
+                UpdateRecentSearches(value);
 
                 UsersList = await InstagramUser.SearchUsersByNameAsync(value);
                 m_previousRequest = value;

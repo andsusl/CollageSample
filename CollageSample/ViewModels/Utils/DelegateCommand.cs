@@ -19,7 +19,7 @@ namespace CollageSample.ViewModels.Utils
 
         public bool CanExecute(object parameter)
         {
-            return null == m_canExecutePredicate || m_canExecutePredicate(parameter);
+            return (parameter is T) && (null == m_canExecutePredicate || m_canExecutePredicate(parameter));
         }
 
         public void Execute(object parameter)

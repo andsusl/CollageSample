@@ -21,7 +21,16 @@ namespace CollageSample.Core.WevUtils
         {
             Uri requestUri = null;
             StringBuilder builder = new StringBuilder(relativePath);
-            Dictionary<string, object> parameters = new Dictionary<string, object>(parametersDictionary);
+            Dictionary<string, object> parameters = null;
+
+            if (null != parametersDictionary)
+            {
+                parameters = new Dictionary<string, object>(parametersDictionary);
+            }
+            else
+            {
+                parameters = new Dictionary<string, object>();
+            }
 
             if ('?' != relativePath[relativePath.Length - 1])
             {

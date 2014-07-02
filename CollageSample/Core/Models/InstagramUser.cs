@@ -23,6 +23,11 @@ namespace CollageSample.Core.Models
             return WevUtils.WebInterface.Get<List<InstagramUser>>("users/search", parameters);
         }
 
+        public Task<List<InstagramImage>> GetImagesAsync()
+        {
+            return WevUtils.WebInterface.Get<List<InstagramImage>>(string.Format("users/{0}/media/recent", Id));
+        }
+
         #region Properties
         [DataMember(Name = "full_name")]
         string FullName
@@ -64,5 +69,6 @@ namespace CollageSample.Core.Models
             private set;
         }
         #endregion
+
     }
 }

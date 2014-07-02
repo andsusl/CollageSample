@@ -14,10 +14,11 @@
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <StackPanel Grid.Row="0">
+
+        <StackPanel Grid.Row="0" Margin="0 0 0 20">
             <TextBlock x:Uid="MainPageTitle1"
                        Style="{StaticResource TitleTextBlockStyle}"
                        />
@@ -29,36 +30,37 @@
                             />
         </StackPanel>
 
-        <StackPanel Grid.Row="1"
-                    Margin="0 20 0 0" >
-            <TextBlock x:Name="NoResultsTextBlock" 
-                       x:Uid="NoUsersFound" 
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Visibility="Collapsed"
-                       />
-            <ListBox x:Name="ListOfUsers"                       
-                     ItemsSource="{Binding UsersList}">
-                <interactivity:Interaction.Behaviors>
-                    <behaviour:EventTriggerBehavior EventName="SelectionChanged">
-                        <behaviour:InvokeCommandAction Command="{Binding  ViewUserCommand}"
-                                                       CommandParameter="{Binding SelectedItem, ElementName=ListOfUsers}" />
-                    </behaviour:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding AvatarUrl}"
-                                   Height="60"
-                                   Width="60"
-                                   Margin="6" />
-                            <TextBlock Margin="{StaticResource PhoneTouchTargetOverhang}"
-                                       Text="{Binding Name}" 
-                                       VerticalAlignment="Center"
-                                       />                        
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>        
+        <TextBlock Grid.Row="1"
+                    x:Name="NoResultsTextBlock" 
+                    x:Uid="NoUsersFound" 
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Visibility="Collapsed"
+                    />
+        <ListBox x:Name="ListOfUsers"
+                    Grid.Row="2"
+                    ItemsSource="{Binding UsersList}"
+                    ScrollViewer.VerticalScrollMode="Auto">
+            <interactivity:Interaction.Behaviors>
+                <behaviour:EventTriggerBehavior EventName="SelectionChanged">
+                    <behaviour:InvokeCommandAction Command="{Binding  ViewUserCommand}"
+                                                    CommandParameter="{Binding SelectedItem, ElementName=ListOfUsers}" />
+                </behaviour:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding AvatarUrl}"
+                                Height="60"
+                                Width="60"
+                                Margin="6" />
+                        <TextBlock Margin="{StaticResource PhoneTouchTargetOverhang}"
+                                    Text="{Binding Name}" 
+                                    VerticalAlignment="Center"
+                                    />                        
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
     </Grid>
 </views:BasePage>
