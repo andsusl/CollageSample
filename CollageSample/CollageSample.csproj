@@ -86,10 +86,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\InstagramUser.cs" />
+    <Compile Include="Core\Models\InstagramUser.cs" />
+    <Compile Include="Core\WevUtils\WebInterface.cs" />
     <Compile Include="ViewModels\Utils\DelegateCommand.cs" />
-    <Compile Include="ViewModels\MainVewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\BasePage.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

@@ -1,14 +1,14 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using CollageSample.Views;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
-namespace CollageSample
+namespace CollageSample.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : BasePage
     {
         private Windows.ApplicationModel.Resources.ResourceLoader m_resourceLoader;
 
@@ -18,34 +18,36 @@ namespace CollageSample
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
+            DataContext = new CollageSample.ViewModels.MainViewModel();
+
             m_resourceLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
             
-            UsersListTitleTextBlock.Text = m_resourceLoader.GetString("MostLikedUsersListTitle");
-
-            UserNameSuggestBox.TextChanged += UserNameSuggestBox_TextChanged;
+            UserNameSuggestBox.KeyUp += UserNameSuggestBox_KeyUp;
+            ListOfUsers.Items.VectorChanged += Items_VectorChanged;
         }
 
-        void UserNameSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        void Items_VectorChanged(Windows.Foundation.Collections.IObservableVector<object> sender, Windows.Foundation.Collections.IVectorChangedEventArgs @event)
         {
-            if (string.IsNullOrEmpty(sender.Text))
+            // TODO: create UserControl: listbox with empty message
+            if (0 == ListOfUsers.Items.Count)
             {
-                UsersListTitleTextBlock.Text = m_resourceLoader.GetString("MostLikedUsersListTitle");
+                NoResultsTextBlock.Visibility = Windows.UI.Xaml.Visibility.Visible;
             }
-            else
-            {
-                UsersListTitleTextBlock.Text = string.Format("{0} {1}", m_resourceLoader.GetString("SearchResultsListTitle"), sender.Text);
-            }
-
         }
 
-        /// <summary>
-        /// Invoked when this page is about to be displayed in a Frame.
-        /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.
-        /// This parameter is typically used to configure the page.</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        // default behaviour - run search by enter key
+        void UserNameSuggestBox_KeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            // TODO: Enhancement: clear search box, update cached lists
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                System.Windows.Input.ICommand command = (DataContext as CollageSample.ViewModels.MainViewModel).StartSearchCommand;
+
+                if (null != command && command.CanExecute(UserNameSuggestBox.Text))
+                {
+                    NoResultsTextBlock.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    command.Execute(UserNameSuggestBox.Text);
+                }
+            }
         }
     }
 }

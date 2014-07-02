@@ -1,5 +1,6 @@
-﻿<Page
-    x:Class="CollageSample.MainPage"
+﻿<views:BasePage
+    x:Class="CollageSample.Views.MainPage"
+    xmlns:views="using:CollageSample.Views"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CollageSample"
@@ -15,7 +16,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
+        
         <StackPanel Grid.Row="0">
             <TextBlock x:Uid="MainPageTitle1"
                        Style="{StaticResource TitleTextBlockStyle}"
@@ -23,38 +24,41 @@
             <TextBlock x:Uid="MainPageTitle2"
                        Style="{StaticResource HeaderTextBlockStyle}"
                        />
-        </StackPanel>
-        
-        <StackPanel Grid.Row="1" Margin="0 20 0 0">
-            <TextBlock x:Uid="EnterUserNameToSearch"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       />
-            <AutoSuggestBox x:Name="UserNameSuggestBox"
+            <AutoSuggestBox x:Name="UserNameSuggestBox" 
                             ItemsSource="{Binding RecentUsers}" 
-                            Text="{Binding UserName, Mode=TwoWay}" 
                             />
-            <TextBlock x:Name="UsersListTitleTextBlock"
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0 20 0 0" >
+            <TextBlock x:Name="NoResultsTextBlock" 
+                       x:Uid="NoUsersFound" 
                        Style="{StaticResource BodyTextBlockStyle}"
-                       Margin="0 12 0 0"
+                       Visibility="Collapsed"
                        />
-            <ListBox x:Name="ListOfUsers" 
+            <ListBox x:Name="ListOfUsers"                       
                      ItemsSource="{Binding UsersList}">
+                <interactivity:Interaction.Behaviors>
+                    <behaviour:EventTriggerBehavior EventName="SelectionChanged">
+                        <behaviour:InvokeCommandAction Command="{Binding  ViewUserCommand}"
+                                                       CommandParameter="{Binding SelectedItem, ElementName=ListOfUsers}" />
+                    </behaviour:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Margin="{StaticResource PhoneTouchTargetOverhang}"
-                                   Text="{Binding Name}">
-                            
-                            <interactivity:Interaction.Behaviors>
-                                <behaviour:EventTriggerBehavior EventName="Tap">
-                                    <behaviour:InvokeCommandAction Command="{Binding ViewUserCommand, ElementName=ListOfUsers}"
-                                                                   CommandParameter="{Binding}" />
-                                </behaviour:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding AvatarUrl}"
+                                   Height="60"
+                                   Width="60"
+                                   Margin="6" />
+                            <TextBlock Margin="{StaticResource PhoneTouchTargetOverhang}"
+                                       Text="{Binding Name}" 
+                                       VerticalAlignment="Center"
+                                       />                        
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </StackPanel>       
-        
+        </StackPanel>        
     </Grid>
-</Page>
+</views:BasePage>

@@ -117,22 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EnterUserNameToSearch.Text" xml:space="preserve">
-    <value>Please enter name to search</value>
-    <comment>Search box message.</comment>
-  </data>
   <data name="MainPageTitle1.Text" xml:space="preserve">
     <value>collage maker</value>
     <comment>Page header</comment>
   </data>
   <data name="MainPageTitle2.Text" xml:space="preserve">
-    <value>choose user</value>
+    <value>search user</value>
     <comment>Page subheader</comment>
   </data>
-  <data name="MostLikedUsersListTitle" xml:space="preserve">
-    <value>Most liked users list</value>
-  </data>
-  <data name="SearchResultsListTitle" xml:space="preserve">
-    <value>Search results for</value>
+  <data name="NoUsersFound.Text" xml:space="preserve">
+    <value>No results.</value>
   </data>
 </root>
